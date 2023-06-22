@@ -22,9 +22,6 @@ class Day
     #[ORM\Column]
     private ?bool $isPublicHoliday = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $lastDayCreated = null;
-
     #[ORM\OneToMany(mappedBy: 'day', targetEntity: Activity::class)]
     private Collection $activities;
 
@@ -58,18 +55,6 @@ class Day
     public function setIsPublicHoliday(bool $isPublicHoliday): self
     {
         $this->isPublicHoliday = $isPublicHoliday;
-
-        return $this;
-    }
-
-    public function getLastDayCreated(): ?\DateTimeInterface
-    {
-        return $this->lastDayCreated;
-    }
-
-    public function setLastDayCreated(\DateTimeInterface $lastDayCreated): self
-    {
-        $this->lastDayCreated = $lastDayCreated;
 
         return $this;
     }

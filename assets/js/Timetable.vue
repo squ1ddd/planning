@@ -7,7 +7,8 @@
         <button @click="changeDate('dblnext')"><img src="../images/double-right-arrow.png" alt="dblnext"></button>
     </div>
     <div class="container">
-        <div class="left"></div>
+        <div class="left">
+        </div>
         <div class="right">
             <div class="week">
                 <div class="dayBox">Monday</div>
@@ -27,7 +28,8 @@ export default {
     data() {
         return {
             selectedDate: null,
-            currentEntireDate: null
+            currentEntireDate: null,
+            week: []
         }
     },
     methods: {
@@ -51,7 +53,41 @@ export default {
                     return ''
             }
         },
-        changeDate(value) {
+        dateCreation() {
+            let listDays = new Array()
+            let dateAdd = this.selectedDate
+            switch(this.currentEntireDate) {
+                case 'Monday' :
+                    break
+                case 'Tuesday' :
+                    dateAdd = moment(dateAdd).subtract(1, 'd')
+                    break
+                case 'Wednesday' :
+                    dateAdd = moment(dateAdd).subtract(2, 'd')
+                    break
+                case 'Thursday' :
+                    dateAdd = moment(dateAdd).subtract(3, 'd')
+                    break
+                case 'Friday' :
+                    dateAdd = moment(dateAdd).subtract(4, 'd')
+                    break
+                case 'Saturday' :
+                    dateAdd = moment(dateAdd).subtract(5, 'd')
+                    break
+                case 'Sunday' :
+                    dateAdd = moment(dateAdd).subtract(6, 'd')
+                    break
+            }
+            for (let index = 0; index <= 6; index++) {
+                        listDays.push(dateAdd)
+                        dateAdd = moment(dateAdd).add(1, 'd').toDate()
+                        dateAdd = moment(dateAdd).format('YYYY-MM-DD')
+                    }
+            fetch('/api/getOrCreateDays/' + listDays)
+                .then(response => response.json())
+                .then(objectList => this.week = objectList)
+        },
+        changeDate(value = null) {
             let listDate = new Array()
             listDate = this.selectedDate.split('-')
             let newDate = new Date(listDate[0], listDate[1] - 1, listDate[2])
@@ -72,14 +108,14 @@ export default {
                     break
             }
             this.currentEntireDate = this.convertIndexToDay(moment(newDate).day())
-            console.log(this.currentEntireDate)
             this.selectedDate = moment(newDate).format('YYYY-MM-DD')
+            this.dateCreation()
         }
     },
     created() {
         fetch('/api/getCurrentDate')
             .then(response => response.json())
-            .then(data => this.selectedDate = data)
+            .then(data => { this.selectedDate = data; this.changeDate(); this.dateCreation() })
     }
 }
 </script>
